@@ -62,7 +62,7 @@ def runTestCommand (platform, project, boolean rocmExamples=false)
                 fi
                 ${hmmTestCommand}
             """
-    platform.runCommand(this, command)
+    platform.runCommand(this, command, "ROCM Examples")
     //ROCM Examples
     if (rocmExamples){
         String buildString = ""
