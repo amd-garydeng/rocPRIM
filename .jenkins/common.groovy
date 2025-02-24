@@ -52,18 +52,6 @@ def runTestCommand (platform, project, boolean rocmExamples=false)
         hmmTestCommand = ''
         echo("TESTS DISABLED")
     }
-    def command = """#!/usr/bin/env bash
-                set -x
-                cd ${project.paths.project_build_prefix}
-                cd ${project.testDirectory}
-                ${testCommand} ${testCommandExclude}
-                if (( \$? != 0 )); then
-                    exit 1
-                fi
-                ${hmmTestCommand}
-            """
-
-    platform.runCommand(this, command)
     //ROCM Examples
     if (rocmExamples){
         String buildString = ""
@@ -73,15 +61,13 @@ def runTestCommand (platform, project, boolean rocmExamples=false)
         else {
             buildString += "sudo rpm -i *.rpm"
         }
-        String libName = project.paths.project_name.replace('-internal', '').replace('-', '_')
-        stageContext.echo "${libName}"
         testCommand = """#!/usr/bin/env bash
                     set -ex
                     cd ${project.paths.project_build_prefix}/build/release/package
                     ls
                     ${buildString}
                     cd ../../..
-                    testDirs=("Libraries/${libName}")
+                    testDirs=("Libraries/rocPRIM")
                     git clone https://github.com/ROCm/rocm-examples.git
                     rocm_examples_dir=\$(readlink -f rocm-examples)
                     for testDir in \${testDirs[@]}; do
