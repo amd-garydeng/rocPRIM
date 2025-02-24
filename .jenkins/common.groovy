@@ -52,6 +52,17 @@ def runTestCommand (platform, project, boolean rocmExamples=false)
         hmmTestCommand = ''
         echo("TESTS DISABLED")
     }
+    def command = """#!/usr/bin/env bash
+                set -x
+                cd ${project.paths.project_build_prefix}
+                cd ${project.testDirectory}
+                ${testCommand} ${testCommandExclude}
+                if (( \$? != 0 )); then
+                    exit 1
+                fi
+                ${hmmTestCommand}
+            """
+    platform.runCommand(this, command)
     //ROCM Examples
     if (rocmExamples){
         String buildString = ""
@@ -78,7 +89,8 @@ def runTestCommand (platform, project, boolean rocmExamples=false)
                         ctest --output-on-failure
                     done
                 """
-        platform.runCommand(this, testCommand)    
+        platform.runCommand(this, testCommand)  
+
     }
 }
 
